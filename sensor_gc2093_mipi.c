@@ -86,7 +86,7 @@ u32 Preview_line_period;
 u32 vts_30fps;
 #define Preview_WIDTH       1920                    //resolution Width when preview
 #define Preview_HEIGHT      1080                    //resolution Height when preview
-#define Preview_MAX_FPS     30                     //fastest preview FPS
+#define Preview_MAX_FPS     120                     //fastest preview FPS
 #define Preview_MIN_FPS     3                      //slowest preview FPS
 #define Preview_CROP_START_X     0                      //CROP_START_X
 #define Preview_CROP_START_Y     0                      //CROP_START_Y
@@ -123,9 +123,15 @@ CUS_CAMSENSOR_CAP sensor_cap = {
 
 static struct {
     // Modify it based on number of support resolution
-    enum { LINEAR_RES_1 = 0,
-        LINEAR_RES_2,
+    enum { 
+		LINEAR_RES_1 = 0,
+//      LINEAR_RES_2,
 		LINEAR_RES_3,
+		LINEAR_RES_4,
+//		LINEAR_RES_5,
+		LINEAR_RES_6,
+		LINEAR_RES_7,
+		LINEAR_RES_8,
         LINEAR_RES_END } mode;
     // Sensor Output Image info
     struct _senout {
@@ -141,8 +147,13 @@ static struct {
     } senstr;
 } gc2093_mipi_linear[] = {
 	{ LINEAR_RES_1, { 1920, 1080, 3, 60  }, { 0, 0, 1920, 1080 }, { "1920x1080@60fps" } },
-    { LINEAR_RES_2, { 1920, 1080, 3, 90  }, { 0, 0, 1920, 1080 }, { "1920x1080@90fps" } },
-    { LINEAR_RES_3, { 1920, 768,  3, 120 }, { 0, 0, 1920,  768 }, { "1920x768@120fps" } }
+//	{ LINEAR_RES_2, { 1920, 1080, 3, 70  }, { 0, 0, 1920, 1080 }, { "1920x1080@70fps" } },
+	{ LINEAR_RES_3, { 1920, 1080, 3, 80  }, { 0, 0, 1920, 1080 }, { "1920x1080@80fps" } },
+    { LINEAR_RES_4, { 1920, 1080, 3, 90  }, { 0, 0, 1920, 1080 }, { "1920x1080@90fps" } },
+//	{ LINEAR_RES_5, { 1920, 960,  3, 90  }, { 0, 0, 1920,  960 }, { "1920x960@90fps"  } },
+	{ LINEAR_RES_6, { 1920, 864,  3, 100 }, { 0, 0, 1920,  864 }, { "1920x864@100fps" } },
+    { LINEAR_RES_7, { 1920, 768,  3, 120 }, { 0, 0, 1920,  768 }, { "1920x768@120fps" } },
+	{ LINEAR_RES_8, { 1280, 720,  3, 120 }, { 0, 0, 1280,  720 }, { "1280x720@120fps" } },
 };
 
 typedef struct {
@@ -229,7 +240,7 @@ const I2C_ARRAY Sensor_id_table[] =
     {0x03f1, 0x93},
 };
 
-// 1920x1080, 60fps, vts=1127, pclk=88.875MHz
+// LINEAR_RES_1, 1920x1080, 60fps, vts=1127, pclk=88.875MHz
 I2C_ARRAY Sensor_init_table_1920x1080_60fps[] =
 {	
     /****system****/
@@ -355,7 +366,259 @@ I2C_ARRAY Sensor_init_table_1920x1080_60fps[] =
     {0x003e, 0x91},
 };
 
-// 1920x1080, 90fps, vts=1122, pclk=132.750MHz
+// LINEAR_RES_2, 1920x1080, 70fps, vts=1125, pclk=103.500MHz
+I2C_ARRAY Sensor_init_table_1920x1080_70fps[] =
+{	
+    /****system****/
+    {0x03fe, 0xf0},
+    {0x03fe, 0xf0},
+    {0x03fe, 0xf0},
+    {0x03fe, 0x00},
+    {0x03f2, 0x00},
+    {0x03f3, 0x00},
+    {0x03f4, 0x36},
+    {0x03f5, 0xc0},
+    {0x03f6, 0x0B},
+    {0x03f7, 0x01},
+    {0x03f8, 0x5c},
+    {0x03f9, 0x40},
+    {0x03fc, 0x8e},
+	
+    /****CISCTL & ANALOG****/
+    {0x0087, 0x18},
+    {0x00ee, 0x30},
+    {0x00d0, 0xbf},
+    {0x01a0, 0x00},
+    {0x01a4, 0x40},
+    {0x01a5, 0x40},
+    {0x01a6, 0x40},
+    {0x01af, 0x09},
+    {0x0001, 0x00},
+    {0x0002, 0x02},
+    {0x0003, 0x00},
+    {0x0004, 0x64},
+    {0x0005, 0x02},
+    {0x0006, 0x91},
+    {0x0007, 0x00},
+    {0x0008, 0x6e},
+    {0x0009, 0x00},
+    {0x000a, 0x02},
+    {0x000b, 0x00},
+    {0x000c, 0x04},
+    {0x000d, 0x04},
+    {0x000e, 0x40},
+    {0x000f, 0x07},
+    {0x0010, 0x8c},
+    {0x0013, 0x15},
+    {0x0019, 0x0c},
+    {0x0041, 0x04},
+    {0x0042, 0x65},
+    {0x0053, 0x60},
+    {0x008d, 0x92},
+    {0x0090, 0x00},
+    {0x00c7, 0xe1},
+    {0x001b, 0x73},
+    {0x0028, 0x0d},
+    {0x0029, 0x24},
+    {0x002b, 0x04},
+    {0x002e, 0x23},
+    {0x0037, 0x03},
+    {0x0043, 0x04},
+    {0x0044, 0x28},
+    {0x004a, 0x01},
+    {0x004b, 0x20},
+    {0x0055, 0x28},
+    {0x0066, 0x3f},
+    {0x0068, 0x3f},
+    {0x006b, 0x44},
+    {0x0077, 0x00},
+    {0x0078, 0x20},
+    {0x007c, 0xa1},
+    {0x00ce, 0x7c},
+    {0x00d3, 0xd4},
+    {0x00e6, 0x50},
+	
+	 /*gain*/
+	{0x00b6, 0xc0},
+	{0x00b0, 0x60},
+
+	/*isp*/
+	{0x0102, 0x89},
+	{0x0104, 0x01},
+
+	/*blk*/
+	{0x0026, 0x30},
+	{0x0142, 0x00},
+	{0x0149, 0x1e},
+	{0x014a, 0x07},
+	{0x014b, 0x80},
+	{0x0155, 0x07},
+	{0x0414, 0x7e},
+	{0x0415, 0x7e},
+	{0x0416, 0x7e},
+	{0x0417, 0x7e},
+	{0x04e0, 0x18},
+
+	/*dark sun*/
+	{0x0123, 0x08},
+	{0x0123, 0x00},
+	{0x0120, 0x01},
+	{0x0121, 0x00},
+	{0x0122, 0x10},
+	{0x0124, 0x03},
+	{0x0125, 0xff},
+	{0x001a, 0x8c},
+	{0x00c6, 0xe0},
+
+	/*window*/
+	{0x0192, 0x02}, 
+	{0x0194, 0x03}, 
+	{0x0195, 0x04},
+	{0x0196, 0x38}, 
+	{0x0197, 0x07},
+	{0x0198, 0x80}, 
+
+    //DVP & MIPI
+    {0x0199, 0x00},
+    {0x019a, 0x06},
+    {0x007b, 0x2a},
+    {0x0023, 0x2d},
+    {0x0201, 0x27},
+    {0x0202, 0x56},
+    {0x0203, 0xb6},
+    {0x0212, 0x80},
+    {0x0213, 0x07},
+    {0x0215, 0x10},
+    {0x003e, 0x91},
+};
+
+// LINEAR_RES_3, 1920x1080, 80fps, vts=1125, pclk=118.125MHz
+I2C_ARRAY Sensor_init_table_1920x1080_80fps[] =
+{	
+    /****system****/
+    {0x03fe, 0xf0},
+    {0x03fe, 0xf0},
+    {0x03fe, 0xf0},
+    {0x03fe, 0x00},
+    {0x03f2, 0x00},
+    {0x03f3, 0x00},
+    {0x03f4, 0x36},
+    {0x03f5, 0xc0},
+    {0x03f6, 0x0B},
+    {0x03f7, 0x01},
+    {0x03f8, 0x69},
+    {0x03f9, 0x40},
+    {0x03fc, 0x8e},
+	
+    /****CISCTL & ANALOG****/
+    {0x0087, 0x18},
+    {0x00ee, 0x30},
+    {0x00d0, 0xbf},
+    {0x01a0, 0x00},
+    {0x01a4, 0x40},
+    {0x01a5, 0x40},
+    {0x01a6, 0x40},
+    {0x01af, 0x09},
+    {0x0001, 0x00},
+    {0x0002, 0x02},
+    {0x0003, 0x00},
+    {0x0004, 0x64},
+    {0x0005, 0x02},
+    {0x0006, 0x91},
+    {0x0007, 0x00},
+    {0x0008, 0x6e},
+    {0x0009, 0x00},
+    {0x000a, 0x02},
+    {0x000b, 0x00},
+    {0x000c, 0x04},
+    {0x000d, 0x04},
+    {0x000e, 0x40},
+    {0x000f, 0x07},
+    {0x0010, 0x8c},
+    {0x0013, 0x15},
+    {0x0019, 0x0c},
+    {0x0041, 0x04},
+    {0x0042, 0x65},
+    {0x0053, 0x60},
+    {0x008d, 0x92},
+    {0x0090, 0x00},
+    {0x00c7, 0xe1},
+    {0x001b, 0x73},
+    {0x0028, 0x0d},
+    {0x0029, 0x24},
+    {0x002b, 0x04},
+    {0x002e, 0x23},
+    {0x0037, 0x03},
+    {0x0043, 0x04},
+    {0x0044, 0x28},
+    {0x004a, 0x01},
+    {0x004b, 0x20},
+    {0x0055, 0x28},
+    {0x0066, 0x3f},
+    {0x0068, 0x3f},
+    {0x006b, 0x44},
+    {0x0077, 0x00},
+    {0x0078, 0x20},
+    {0x007c, 0xa1},
+    {0x00ce, 0x7c},
+    {0x00d3, 0xd4},
+    {0x00e6, 0x50},
+	
+	 /*gain*/
+	{0x00b6, 0xc0},
+	{0x00b0, 0x60},
+
+	/*isp*/
+	{0x0102, 0x89},
+	{0x0104, 0x01},
+
+	/*blk*/
+	{0x0026, 0x30},
+	{0x0142, 0x00},
+	{0x0149, 0x1e},
+	{0x014a, 0x07},
+	{0x014b, 0x80},
+	{0x0155, 0x07},
+	{0x0414, 0x7e},
+	{0x0415, 0x7e},
+	{0x0416, 0x7e},
+	{0x0417, 0x7e},
+	{0x04e0, 0x18},
+
+	/*dark sun*/
+	{0x0123, 0x08},
+	{0x0123, 0x00},
+	{0x0120, 0x01},
+	{0x0121, 0x00},
+	{0x0122, 0x10},
+	{0x0124, 0x03},
+	{0x0125, 0xff},
+	{0x001a, 0x8c},
+	{0x00c6, 0xe0},
+
+	/*window*/
+	{0x0192, 0x02}, 
+	{0x0194, 0x03}, 
+	{0x0195, 0x04},
+	{0x0196, 0x38}, 
+	{0x0197, 0x07},
+	{0x0198, 0x80}, 
+
+    //DVP & MIPI
+    {0x0199, 0x00},
+    {0x019a, 0x06},
+    {0x007b, 0x2a},
+    {0x0023, 0x2d},
+    {0x0201, 0x27},
+    {0x0202, 0x56},
+    {0x0203, 0xb6},
+    {0x0212, 0x80},
+    {0x0213, 0x07},
+    {0x0215, 0x10},
+    {0x003e, 0x91},
+};
+
+// LINEAR_RES_4, 1920x1080, 90fps, vts=1122, pclk=132.750MHz
 I2C_ARRAY Sensor_init_table_1920x1080_90fps[] =
 {	
     /****system****/
@@ -481,7 +744,259 @@ I2C_ARRAY Sensor_init_table_1920x1080_90fps[] =
     {0x003e, 0x91},
 };
 
-// 1920x768(2.5:1), 120fps, vts=799, pclk=126.000MHz
+// LINEAR_RES_5, 1920x960(18:9), 90fps, vts=998, pclk=118.125MHz
+I2C_ARRAY Sensor_init_table_1920x960_90fps[] =
+{
+	/****system****/
+	{0x03fe, 0xf0},
+	{0x03fe, 0xf0},
+	{0x03fe, 0xf0},
+	{0x03fe, 0x00},
+	{0x03f2, 0x00},
+	{0x03f3, 0x00},
+	{0x03f4, 0x36},
+	{0x03f5, 0xc0},
+	{0x03f6, 0x0B},
+	{0x03f7, 0x01},
+	{0x03f8, 0x69},
+	{0x03f9, 0x40},
+	{0x03fc, 0x8e},
+	
+	/****CISCTL & ANALOG****/
+	{0x0087, 0x18},
+	{0x00ee, 0x30},
+	{0x00d0, 0xbf},
+	{0x01a0, 0x00},
+	{0x01a4, 0x40},
+	{0x01a5, 0x40},
+	{0x01a6, 0x40},
+	{0x01af, 0x09},
+	{0x0001, 0x00},
+	{0x0002, 0x02},
+	{0x0003, 0x00},
+	{0x0004, 0x64},
+	{0x0005, 0x02},
+	{0x0006, 0x91},
+	{0x0007, 0x00},
+	{0x0008, 0x5d},
+	{0x0009, 0x00},
+	{0x000a, 0x3e},//158//62
+	{0x000b, 0x00},
+	{0x000c, 0x04},//4
+	{0x000d, 0x03},
+	{0x000e, 0xc4},//772=768+4//964
+	{0x000f, 0x07},
+	{0x0010, 0x8c},//1932
+	{0x0013, 0x15},
+	{0x0019, 0x0c},
+	{0x0041, 0x03},
+	{0x0042, 0xe6},//
+	{0x0053, 0x60},
+	{0x008d, 0x92},
+	{0x0090, 0x00},
+	{0x00c7, 0xe1},
+	{0x001b, 0x73},
+	{0x0028, 0x0d},
+	{0x0029, 0x24},
+	{0x002b, 0x04},
+	{0x002e, 0x23},
+	{0x0037, 0x03},
+	{0x0043, 0x04},
+	{0x0044, 0x28},
+	{0x004a, 0x01},
+	{0x004b, 0x20},
+	{0x0055, 0x28},
+	{0x0066, 0x3f},
+	{0x0068, 0x3f},
+	{0x006b, 0x44},
+	{0x0077, 0x00},
+	{0x0078, 0x20},
+	{0x007c, 0xa1},
+	{0x00ce, 0x7c},
+	{0x00d3, 0xd4},
+	{0x00e6, 0x50},
+	
+	 /*gain*/
+	{0x00b6, 0xc0},
+	{0x00b0, 0x60},
+
+	/*isp*/
+	{0x0102, 0x89},
+	{0x0104, 0x01},
+
+	/*blk*/
+	{0x0026, 0x30},
+	{0x0142, 0x00},
+	{0x0149, 0x1e},
+	{0x014a, 0x07},
+	{0x014b, 0x80},
+	{0x0155, 0x07},
+	{0x0414, 0x7e},
+	{0x0415, 0x7e},
+	{0x0416, 0x7e},
+	{0x0417, 0x7e},
+	{0x04e0, 0x18},
+
+	/*dark sun*/
+	{0x0123, 0x08},
+	{0x0123, 0x00},
+	{0x0120, 0x01},
+	{0x0121, 0x00},
+	{0x0122, 0x10},
+	{0x0124, 0x03},
+	{0x0125, 0xff},
+	{0x001a, 0x8c},
+	{0x00c6, 0xe0},
+
+	/*window*/
+	{0x0192, 0x02},
+	{0x0194, 0x03},
+	{0x0195, 0x03},
+	{0x0196, 0xc0},//768//960
+	{0x0197, 0x07},
+	{0x0198, 0x80},//1920
+
+    //DVP & MIPI
+    {0x0199, 0x00},
+    {0x019a, 0x06},
+    {0x007b, 0x2a},
+    {0x0023, 0x2d},
+    {0x0201, 0x27},
+    {0x0202, 0x56},
+    {0x0203, 0xb6},
+    {0x0212, 0x80},
+    {0x0213, 0x07},
+    {0x0215, 0x10},
+    {0x003e, 0x91},
+};
+
+// LINEAR_RES_6, 1920x864(20:9), 100fps, vts=899, pclk=118.125MHz
+I2C_ARRAY Sensor_init_table_1920x864_100fps[] =
+{
+	/****system****/
+	{0x03fe, 0xf0},
+	{0x03fe, 0xf0},
+	{0x03fe, 0xf0},
+	{0x03fe, 0x00},
+	{0x03f2, 0x00},
+	{0x03f3, 0x00},
+	{0x03f4, 0x36},
+	{0x03f5, 0xc0},
+	{0x03f6, 0x0B},
+	{0x03f7, 0x01},
+	{0x03f8, 0x69},
+	{0x03f9, 0x40},
+	{0x03fc, 0x8e},
+	
+	/****CISCTL & ANALOG****/
+	{0x0087, 0x18},
+	{0x00ee, 0x30},
+	{0x00d0, 0xbf},
+	{0x01a0, 0x00},
+	{0x01a4, 0x40},
+	{0x01a5, 0x40},
+	{0x01a6, 0x40},
+	{0x01af, 0x09},
+	{0x0001, 0x00},
+	{0x0002, 0x02},
+	{0x0003, 0x00},
+	{0x0004, 0x64},
+	{0x0005, 0x02},
+	{0x0006, 0x91},
+	{0x0007, 0x00},
+	{0x0008, 0x5d},
+	{0x0009, 0x00},
+	{0x000a, 0x6e},
+	{0x000b, 0x00},
+	{0x000c, 0x04},
+	{0x000d, 0x03},
+	{0x000e, 0x64},
+	{0x000f, 0x07},
+	{0x0010, 0x8c},
+	{0x0013, 0x15},
+	{0x0019, 0x0c},
+	{0x0041, 0x03},
+	{0x0042, 0xe6},
+	{0x0053, 0x60},
+	{0x008d, 0x92},
+	{0x0090, 0x00},
+	{0x00c7, 0xe1},
+	{0x001b, 0x73},
+	{0x0028, 0x0d},
+	{0x0029, 0x24},
+	{0x002b, 0x04},
+	{0x002e, 0x23},
+	{0x0037, 0x03},
+	{0x0043, 0x04},
+	{0x0044, 0x28},
+	{0x004a, 0x01},
+	{0x004b, 0x20},
+	{0x0055, 0x28},
+	{0x0066, 0x3f},
+	{0x0068, 0x3f},
+	{0x006b, 0x44},
+	{0x0077, 0x00},
+	{0x0078, 0x20},
+	{0x007c, 0xa1},
+	{0x00ce, 0x7c},
+	{0x00d3, 0xd4},
+	{0x00e6, 0x50},
+	
+	 /*gain*/
+	{0x00b6, 0xc0},
+	{0x00b0, 0x60},
+
+	/*isp*/
+	{0x0102, 0x89},
+	{0x0104, 0x01},
+
+	/*blk*/
+	{0x0026, 0x30},
+	{0x0142, 0x00},
+	{0x0149, 0x1e},
+	{0x014a, 0x07},
+	{0x014b, 0x80},
+	{0x0155, 0x07},
+	{0x0414, 0x7e},
+	{0x0415, 0x7e},
+	{0x0416, 0x7e},
+	{0x0417, 0x7e},
+	{0x04e0, 0x18},
+
+	/*dark sun*/
+	{0x0123, 0x08},
+	{0x0123, 0x00},
+	{0x0120, 0x01},
+	{0x0121, 0x00},
+	{0x0122, 0x10},
+	{0x0124, 0x03},
+	{0x0125, 0xff},
+	{0x001a, 0x8c},
+	{0x00c6, 0xe0},
+
+	/*window*/
+	{0x0192, 0x02},
+	{0x0194, 0x03},
+	{0x0195, 0x03},
+	{0x0196, 0x60},//768//960//864
+	{0x0197, 0x07},
+	{0x0198, 0x80},//1920
+
+    //DVP & MIPI
+    {0x0199, 0x00},
+    {0x019a, 0x06},
+    {0x007b, 0x2a},
+    {0x0023, 0x2d},
+    {0x0201, 0x27},
+    {0x0202, 0x56},
+    {0x0203, 0xb6},
+    {0x0212, 0x80},
+    {0x0213, 0x07},
+    {0x0215, 0x10},
+    {0x003e, 0x91},
+};
+
+// LINEAR_RES_7, 1920x768(2.5:1), 120fps, vts=799, pclk=126.000MHz
 I2C_ARRAY Sensor_init_table_1920x768_120fps[] =
 {
 	/****system****/
@@ -606,6 +1121,133 @@ I2C_ARRAY Sensor_init_table_1920x768_120fps[] =
     {0x0215, 0x10},
     {0x003e, 0x91},
 };
+
+// LINEAR_RES_8, 1280x720, 120fps, vts=750, pclk=119.250MHz
+I2C_ARRAY Sensor_init_table_1280x720_120fps[] =
+{	
+	/****system****/
+	{0x03fe, 0xf0},
+	{0x03fe, 0xf0},
+	{0x03fe, 0xf0},
+	{0x03fe, 0x00},
+	{0x03f2, 0x00},
+	{0x03f3, 0x00},
+	{0x03f4, 0x36},
+	{0x03f5, 0xc0},
+	{0x03f6, 0x0B},
+	{0x03f7, 0x01},
+	{0x03f8, 0x6a}, 
+	{0x03f9, 0x40},
+	{0x03fc, 0x8e},
+	
+	/****CISCTL & ANALOG****/
+	{0x0087, 0x18},
+	{0x00ee, 0x30},
+	{0x00d0, 0xbf},
+	{0x01a0, 0x00},
+	{0x01a4, 0x40},
+	{0x01a5, 0x40},
+	{0x01a6, 0x40},
+	{0x01af, 0x09},
+	{0x0001, 0x00},
+	{0x0002, 0x02},
+	{0x0003, 0x00},
+	{0x0004, 0x64},
+	{0x0005, 0x02},
+	{0x0006, 0x91},
+	{0x0007, 0x00},
+	{0x0008, 0x5d},
+	{0x0009, 0x00},
+	{0x000a, 0xb6},
+	{0x000b, 0x02},
+	{0x000c, 0x88},
+	{0x000d, 0x02},
+	{0x000e, 0xd4},
+	{0x000f, 0x05},
+	{0x0010, 0x08},
+	{0x0013, 0x15},
+	{0x0019, 0x0c},
+	{0x0041, 0x02},	
+	{0x0042, 0xee},
+	{0x0053, 0x60},
+	{0x008d, 0x92},
+	{0x0090, 0x00},
+	{0x00c7, 0xe1},
+	{0x001b, 0x73},
+	{0x0028, 0x0d},
+	{0x0029, 0x24},
+	{0x002b, 0x04},
+	{0x002e, 0x23},
+	{0x0037, 0x03},
+	{0x0043, 0x04},
+	{0x0044, 0x28},
+	{0x004a, 0x01},
+	{0x004b, 0x20},
+	{0x0055, 0x28},
+	{0x0066, 0x3f},
+	{0x0068, 0x3f},
+	{0x006b, 0x44},
+	{0x0077, 0x00},
+	{0x0078, 0x20},
+	{0x007c, 0xa1},
+	{0x00ce, 0x7c},
+	{0x00d3, 0xd4},
+	{0x00e6, 0x50},
+	
+	 /*gain*/
+	{0x00b6, 0xc0},
+	{0x00b0, 0x60},
+
+	/*isp*/
+	{0x0102, 0x89},
+	{0x0104, 0x01},
+
+	/*blk*/
+	{0x0026, 0x30},
+	{0x0142, 0x00},
+	{0x0149, 0x1e},
+	{0x014a, 0x07},
+	{0x014b, 0x80},
+	{0x0155, 0x07},
+	{0x0414, 0x7e},
+	{0x0415, 0x7e},
+	{0x0416, 0x7e},
+	{0x0417, 0x7e},
+	{0x04e0, 0x18},
+
+	/*dark sun*/
+	{0x0123, 0x08},
+	{0x0123, 0x00},
+	{0x0120, 0x01},
+	{0x0121, 0x00},
+	{0x0122, 0x10},
+	{0x0124, 0x03},
+	{0x0125, 0xff},
+	{0x001a, 0x8c},
+	{0x00c6, 0xe0},
+
+	/*window*/
+	{0x0192, 0x02},
+	{0x0194, 0x03},
+	{0x0195, 0x02},
+	{0x0196, 0xd0},
+	{0x0197, 0x05},
+	{0x0198, 0x00},
+
+    //DVP & MIPI
+    {0x0199, 0x00},
+    {0x019a, 0x06},
+    {0x007b, 0x2a},
+    {0x0023, 0x2d},
+    {0x0201, 0x27},
+    {0x0202, 0x56},
+    {0x0203, 0xb6},
+    {0x0212, 0x80},
+    {0x0213, 0x07},
+    {0x0215, 0x10},
+    {0x003e, 0x91},
+};
+
 
 static  I2C_ARRAY mirror_reg[] =
 {
@@ -834,6 +1476,7 @@ static int pCus_SetFPS(ms_cus_sensor *handle, u32 fps);
 static int pCus_SetAEGain_cal(ms_cus_sensor *handle, u32 gain);
 static int pCus_AEStatusNotify(ms_cus_sensor *handle, CUS_CAMSENSOR_AE_STATUS_NOTIFY status);
 
+// LINEAR_RES_1
 static int pCus_init_mipi2lane_linear_1920x1080_60fps(ms_cus_sensor *handle)
 {
     gc2093_params *params = (gc2093_params *)handle->private_data;
@@ -864,6 +1507,71 @@ static int pCus_init_mipi2lane_linear_1920x1080_60fps(ms_cus_sensor *handle)
     return SUCCESS;
 }
 
+// LINEAR_RES_2
+/*
+static int pCus_init_mipi2lane_linear_1920x1080_70fps(ms_cus_sensor *handle)
+{
+    gc2093_params *params = (gc2093_params *)handle->private_data;
+    int i,cnt;
+    //ISensorIfAPI *sensor_if = handle->sensor_if_api;
+
+    for (i=0;i< ARRAY_SIZE(Sensor_init_table_1920x1080_70fps);i++) {
+        if (Sensor_init_table_1920x1080_70fps[i].reg==0xffff) {
+            SENSOR_MSLEEP(Sensor_init_table_1920x1080_70fps[i].data);
+        } else {
+            cnt = 0;
+            while (SensorReg_Write(Sensor_init_table_1920x1080_70fps[i].reg, 
+								Sensor_init_table_1920x1080_70fps[i].data) != SUCCESS) {
+                cnt++;
+                SENSOR_DMSG("Sensor_init_table -> Retry %d...\n",cnt);
+                if(cnt>=10) {
+                    SENSOR_DMSG("[%s:%d]Sensor init fail!!\n", __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+                SENSOR_MSLEEP(10);
+            }
+        }
+    }
+
+    pCus_SetOrien(handle, params->cur_orien);
+	vts_reg[0].data = (params->expo.vts >> 8) & 0x003f;
+    vts_reg[1].data = (params->expo.vts >> 0) & 0x00ff;
+    return SUCCESS;
+}
+*/
+
+// LINEAR_RES_3
+static int pCus_init_mipi2lane_linear_1920x1080_80fps(ms_cus_sensor *handle)
+{
+    gc2093_params *params = (gc2093_params *)handle->private_data;
+    int i,cnt;
+    //ISensorIfAPI *sensor_if = handle->sensor_if_api;
+
+    for (i=0;i< ARRAY_SIZE(Sensor_init_table_1920x1080_80fps);i++) {
+        if (Sensor_init_table_1920x1080_80fps[i].reg==0xffff) {
+            SENSOR_MSLEEP(Sensor_init_table_1920x1080_80fps[i].data);
+        } else {
+            cnt = 0;
+            while (SensorReg_Write(Sensor_init_table_1920x1080_80fps[i].reg, 
+								Sensor_init_table_1920x1080_80fps[i].data) != SUCCESS) {
+                cnt++;
+                SENSOR_DMSG("Sensor_init_table -> Retry %d...\n",cnt);
+                if(cnt>=10) {
+                    SENSOR_DMSG("[%s:%d]Sensor init fail!!\n", __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+                SENSOR_MSLEEP(10);
+            }
+        }
+    }
+
+    pCus_SetOrien(handle, params->cur_orien);
+	vts_reg[0].data = (params->expo.vts >> 8) & 0x003f;
+    vts_reg[1].data = (params->expo.vts >> 0) & 0x00ff;
+    return SUCCESS;
+}
+
+// LINEAR_RES_4
 static int pCus_init_mipi2lane_linear_1920x1080_90fps(ms_cus_sensor *handle)
 {
     gc2093_params *params = (gc2093_params *)handle->private_data;
@@ -894,6 +1602,71 @@ static int pCus_init_mipi2lane_linear_1920x1080_90fps(ms_cus_sensor *handle)
     return SUCCESS;
 }
 
+// LINEAR_RES_5
+/*
+static int pCus_init_mipi2lane_linear_1920x960_90fps(ms_cus_sensor *handle)
+{
+    gc2093_params *params = (gc2093_params *)handle->private_data;
+    int i,cnt;
+    //ISensorIfAPI *sensor_if = handle->sensor_if_api;
+
+    for (i=0;i< ARRAY_SIZE(Sensor_init_table_1920x960_90fps);i++) {
+        if (Sensor_init_table_1920x960_90fps[i].reg==0xffff) {
+            SENSOR_MSLEEP(Sensor_init_table_1920x960_90fps[i].data);
+        } else {
+            cnt = 0;
+            while (SensorReg_Write(Sensor_init_table_1920x960_90fps[i].reg, 
+								Sensor_init_table_1920x960_90fps[i].data) != SUCCESS) {
+                cnt++;
+                SENSOR_DMSG("Sensor_init_table -> Retry %d...\n",cnt);
+                if(cnt>=10) {
+                    SENSOR_DMSG("[%s:%d]Sensor init fail!!\n", __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+                SENSOR_MSLEEP(10);
+            }
+        }
+    }
+
+    pCus_SetOrien(handle, params->cur_orien);
+	vts_reg[0].data = (params->expo.vts >> 8) & 0x003f;
+    vts_reg[1].data = (params->expo.vts >> 0) & 0x00ff;
+    return SUCCESS;
+}
+*/
+
+// LINEAR_RES_6
+static int pCus_init_mipi2lane_linear_1920x864_100fps(ms_cus_sensor *handle)
+{
+    gc2093_params *params = (gc2093_params *)handle->private_data;
+    int i,cnt;
+    //ISensorIfAPI *sensor_if = handle->sensor_if_api;
+
+    for (i=0;i< ARRAY_SIZE(Sensor_init_table_1920x864_100fps);i++) {
+        if (Sensor_init_table_1920x864_100fps[i].reg==0xffff) {
+            SENSOR_MSLEEP(Sensor_init_table_1920x864_100fps[i].data);
+        } else {
+            cnt = 0;
+            while (SensorReg_Write(Sensor_init_table_1920x864_100fps[i].reg, 
+								Sensor_init_table_1920x864_100fps[i].data) != SUCCESS) {
+                cnt++;
+                SENSOR_DMSG("Sensor_init_table -> Retry %d...\n",cnt);
+                if(cnt>=10) {
+                    SENSOR_DMSG("[%s:%d]Sensor init fail!!\n", __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+                SENSOR_MSLEEP(10);
+            }
+        }
+    }
+
+    pCus_SetOrien(handle, params->cur_orien);
+	vts_reg[0].data = (params->expo.vts >> 8) & 0x003f;
+    vts_reg[1].data = (params->expo.vts >> 0) & 0x00ff;
+    return SUCCESS;
+}
+
+// LINEAR_RES_7
 static int pCus_init_mipi2lane_linear_1920x768_120fps(ms_cus_sensor *handle)
 {
     gc2093_params *params = (gc2093_params *)handle->private_data;
@@ -907,6 +1680,37 @@ static int pCus_init_mipi2lane_linear_1920x768_120fps(ms_cus_sensor *handle)
             cnt = 0;
             while (SensorReg_Write(Sensor_init_table_1920x768_120fps[i].reg, 
 								Sensor_init_table_1920x768_120fps[i].data) != SUCCESS) {
+                cnt++;
+                SENSOR_DMSG("Sensor_init_table -> Retry %d...\n",cnt);
+                if(cnt>=10) {
+                    SENSOR_DMSG("[%s:%d]Sensor init fail!!\n", __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+                SENSOR_MSLEEP(10);
+            }
+        }
+    }
+
+    pCus_SetOrien(handle, params->cur_orien);
+	vts_reg[0].data = (params->expo.vts >> 8) & 0x003f;
+    vts_reg[1].data = (params->expo.vts >> 0) & 0x00ff;
+    return SUCCESS;
+}
+
+// LINEAR_RES_8
+static int pCus_init_mipi2lane_linear_1280x720_120fps(ms_cus_sensor *handle)
+{
+    gc2093_params *params = (gc2093_params *)handle->private_data;
+    int i,cnt;
+    //ISensorIfAPI *sensor_if = handle->sensor_if_api;
+
+    for (i=0;i< ARRAY_SIZE(Sensor_init_table_1280x720_120fps);i++) {
+        if (Sensor_init_table_1280x720_120fps[i].reg==0xffff) {
+            SENSOR_MSLEEP(Sensor_init_table_1280x720_120fps[i].data);
+        } else {
+            cnt = 0;
+            while (SensorReg_Write(Sensor_init_table_1280x720_120fps[i].reg, 
+								Sensor_init_table_1280x720_120fps[i].data) != SUCCESS) {
                 cnt++;
                 SENSOR_DMSG("Sensor_init_table -> Retry %d...\n",cnt);
                 if(cnt>=10) {
@@ -970,29 +1774,69 @@ static int pCus_SetVideoRes(ms_cus_sensor *handle, u32 res_idx)
 	handle->video_res_supported.ulcur_res = res_idx;
 	
     switch (res_idx) {
-        case 0: //"1920x1080@60fps"
-            handle->video_res_supported.ulcur_res = 0;
+        case LINEAR_RES_1: //"1920x1080@60fps" 
+            handle->video_res_supported.ulcur_res = LINEAR_RES_1;
             handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x1080_60fps;
             vts_30fps=1127;
             params->expo.vts = vts_30fps;
             params->expo.fps = 60;
             Preview_line_period  = 14789;
             break;
-		case 1: //"1920x1080@90fps"
-            handle->video_res_supported.ulcur_res = 1;
+/*		case LINEAR_RES_2: //"1920x1080@70fps" 
+            handle->video_res_supported.ulcur_res = LINEAR_RES_2;
+            handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x1080_70fps;
+            vts_30fps=1125;
+            params->expo.vts = vts_30fps;
+            params->expo.fps = 70;
+            Preview_line_period  = 12698;
+            break;*/
+		case LINEAR_RES_3: //"1920x1080@80fps" 
+            handle->video_res_supported.ulcur_res = LINEAR_RES_3;
+            handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x1080_80fps;
+            vts_30fps=1125;
+            params->expo.vts = vts_30fps;
+            params->expo.fps = 80;
+            Preview_line_period  = 11111;
+            break;
+		case LINEAR_RES_4: //"1920x1080@90fps" 
+            handle->video_res_supported.ulcur_res = LINEAR_RES_4;
             handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x1080_90fps;
             vts_30fps=1122;
             params->expo.vts = vts_30fps;
             params->expo.fps = 90;
             Preview_line_period  = 9902;
             break;
-		case 2: //"1920x768@120fps"
-            handle->video_res_supported.ulcur_res = 2;
+/*		case LINEAR_RES_5: //"1920x960@90fps" 
+            handle->video_res_supported.ulcur_res = LINEAR_RES_5;
+            handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x960_90fps;
+            vts_30fps=998;
+            params->expo.vts = vts_30fps;
+            params->expo.fps = 90;
+            Preview_line_period  = 11133;
+            break;*/
+		case LINEAR_RES_6: //"1920x864@100fps" 
+            handle->video_res_supported.ulcur_res = LINEAR_RES_6;
+            handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x864_100fps;
+            vts_30fps=899;
+            params->expo.vts = vts_30fps;
+            params->expo.fps = 100;
+            Preview_line_period  = 11123;
+            break;
+		case LINEAR_RES_7: //"1920x768@120fps"
+            handle->video_res_supported.ulcur_res = LINEAR_RES_7;
             handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1920x768_120fps;
             vts_30fps=799;
             params->expo.vts = vts_30fps;
             params->expo.fps = 120;
             Preview_line_period  = 10430;
+            break;
+		case LINEAR_RES_8: //"1280x720@120fps"
+            handle->video_res_supported.ulcur_res = LINEAR_RES_8;
+            handle->pCus_sensor_init = pCus_init_mipi2lane_linear_1280x720_120fps;
+            vts_30fps=750;
+            params->expo.vts = vts_30fps;
+            params->expo.fps = 120;
+            Preview_line_period  = 11111;
             break;
         default:
             break;
