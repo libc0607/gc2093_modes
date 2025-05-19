@@ -11,15 +11,25 @@ Use GC2093 with SSC338Q + OpenIPC
  - Reboot & Enjoy
 
 ## Sensor modes 
+**Use overclocked configs at your own risk!**  
+For reference, pclk: 
+ - <100MHz: Safe
+ - 100~120MHz: Overclocked, but most can do under default voltage, and does not deteriorate image quality much -- recommended
+ - 120~140MHz: Overclocked, may not work on some PCBs & will impact image quality
+ - \>140MHz: ![Do not try this at home!.jpg]
+
 Set the resolution and framerate in ```/etc/majestic.yaml```:
 ### 1920x1080 60fps 
-Safe.  
-16:9, full size, vts=1127, pclk=88.875MHz  
-### 1920x768 120fps 
-Overclocked. Use it at your own risk.   
+16:9, full size, vts=1127, pclk=88.875MHz  -- recommened for image quality
+### 1920x1080 80fps 
+16:9, full size, vts=1125, pclk=118.125MHz  -- recommened
+### 1920x864 100fps 
+20:9, cropped at top & bottom, vts=899, pclk=118.125MHz  -- recommened
+### 1280x720 120fps  
+16:9, cropped, vts=750, pclk=119.250MHz  
+### 1920x768 120fps  
 2.5:1, cropped at top & bottom, vts=799, pclk=126.000MHz  
-### 1920x1080 90fps 
-Overclocked. Use it at your own risk.  
+### 1920x1080 90fps  
 16:9, full size, vts=1122, pclk=132.750MHz  
 
 ## Hardware 
@@ -31,11 +41,11 @@ Schematic & HW design guides: [GC2053 CSP 模组设计指南 V1.2 20181212.pdf](
 Note: Match the MIPI length carefully when doing PCB layout. It only has 2 lanes, so quite vulnerable to in/between differential pairs mismatch than imx415/imx335.   
 
 ## IQ file
-Use gc2053.bin first -- it's good enough.  
+Use [gc2053.bin](https://github.com/OpenIPC/firmware/blob/master/general/package/sigmastar-osdrv-infinity6e/files/sensor/configs/gc2053.bin) first -- it's good enough.  
 Or try to tune it with IQTool.  
 
 ## Theory
-GC2093 has several init register arrays available (see References).   
+GC2093 has several init register arrays with comments available (see References).   
 So, by some guess and calculation, it is possible to overclock the sensor & get higher framerates.
 
 From the datasheet, we have: 
@@ -58,11 +68,11 @@ sensor_if->MCLK(idx, 1, handle->mclk);
 ```
 So, we can find an equation. When other pll-related registers not touched, we have:  
 ```
-Line_Length * Frame_Length * Frame_Rate = (pllmp_div / 48) * mclk
+Line_Length * Frame_Length * Frame_Rate * 2 = (pllmp_div / 24) * mclk = pclk
 ```
 For example, 1920x768 120fps:
 ```
-657(Line_Length) * 799(Frame_Length) * 120.013(fps) = (0x70(pllmp_div)/48) * 27,000,000(Hz)
+657(Line_Length) * 799(Frame_Length) * 120.013(fps) * 2 = (0x70(pllmp_div)/24) * 27,000,000(Hz) = 126,000,000(Hz)
 ```
 In my & 侧面(cemian)'s tests, the sensor can be safely overclocked by 30%~40% at Vcore=1.20V, then start flicking when higher than ~140MHz.    
 
