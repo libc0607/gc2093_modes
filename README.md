@@ -1,50 +1,72 @@
 # gc2093_modes
-Use GC2093 with SSC338Q + OpenIPC
+Use GC2093 with SSC338Q/SSC30KQ(/SSC377/SSC378/...) + OpenIPC
 
 **DISCLAIMER: The driver contains overclocking and may damage your hardware. Use it at your own risk!**  
 
 ## Quick test 
- - Copy ```sensor_gc2093_mipi.ko``` to VTX ```/lib/modules/4.9.84/sigmastar/```
+ - Copy ```sensor_gc2093_mipi*.ko``` (suffix difference see below) to VTX ```/lib/modules/4.9.84/sigmastar/```
  - Run ```fw_setenv sensor gc2093``` on VTX
  - Add ```gc2093``` to VTX ```/usr/bin/load_sigmastar``` (add it to the only line with several sensor names) 
- - Copy some IQ file (e.g. gc2053's) to VTX```/etc/sensors/```
+ - Copy some IQ file (e.g. gc2053's) to VTX```/etc/sensors/``` and name it to `gc2093.bin`
  - Reboot & Enjoy
 
 ## Sensor modes 
 **Use overclocked configs at your own risk!**  
 For reference, pclk: 
- - <100MHz: Safe
- - 100~120MHz: Overclocked, but most can do under default voltage, and does not deteriorate image quality much -- recommended
- - 120~140MHz: Overclocked, may not work on some PCBs & will impact image quality
- - \>140MHz: ![Do not try this at home!.jpg]
+ - < 100 MHz: Safe
+ - 100 ~ 120 MHz: Overclocked, seen in commercial SDK, most can do under default voltage, does not deteriorate image quality much
+ - \> 120 MHz: Overclocked, may not work on some PCBs & will impact image quality in low-light 
 
 Set the resolution and framerate in ```/etc/majestic.yaml```:
-### 1920x1080 60fps 
-16:9, full size, vts=1127, pclk=88.875MHz  -- recommened for image quality
-### 1920x1080 80fps 
-16:9, full size, vts=1125, pclk=118.125MHz  -- recommened
-### 1920x864 100fps 
-20:9, cropped at top & bottom, vts=899, pclk=118.125MHz  -- recommened
-### 1280x720 120fps  
-16:9, cropped, vts=750, pclk=119.250MHz  
-### 1920x768 120fps  
-2.5:1, cropped at top & bottom, vts=799, pclk=126.000MHz  
-### 1920x1080 90fps  
-16:9, full size, vts=1122, pclk=132.750MHz  
+
+|res_idx|Resolution|Ratio|Framerate|PCLK|FOV|Line_Length|Frame_Length|
+|---|---|---|---|---|---|---|---|
+|0|1920x1080|16:9|60 fps|88.875 MHz|Full|657|1127|
+|1|1920x1080|16:9|80 fps|118.125 MHz|Full|657|1125|
+|2|1920x1080|16:9|90 fps|132.750 MHz|Full|657|1122|
+|3|1920x864|20:9|100 fps|118.125 MHz|Cropped top/bottom|657|899|
+|4|1920x768|2.5:1|120 fps|126.000 MHz|Cropped top/bottom|657|799|
+|5|1280x720|16:9|120 fps|119.250 MHz|Cropped center|657|750|
+
 
 ## Hardware 
-1/2.9 inch, 2MP, 60fps, 2.8um x 2.8um pixel  
-Datasheet: [GC2093_CSP_Datasheet_V1.1_20201012.pdf](https://github.com/libc0607/gc2093_modes/blob/main/hardware/GC2093_CSP_Datasheet_V1.1_20201012.pdf)  
-Schematic & HW design guides: [GC2053 CSP 模组设计指南 V1.2 20181212.pdf](https://github.com/libc0607/gc2093_modes/blob/main/hardware/GC2053%20CSP%20%E6%A8%A1%E7%BB%84%E8%AE%BE%E8%AE%A1%E6%8C%87%E5%8D%97%20V1.2%2020181212.pdf) (Pin-to-Pin with GC2053)  
-\* All collected from Internet.  
+Note: Match the MIPI length carefully when doing PCB layout. It only has 2 lanes, so quite vulnerable to in/between differential pairs mismatch than imx415/imx335.  
 
-Note: Match the MIPI length carefully when doing PCB layout. It only has 2 lanes, so quite vulnerable to in/between differential pairs mismatch than imx415/imx335.   
+### Datasheet & HW Design Guides
+1/2.9 inch, 2MP, 60 fps default, 2.8um x 2.8um FSI pixel  
+Chip Datasheet: [GC2093_CSP_Datasheet_V1.1_20201012.pdf](https://github.com/libc0607/gc2093_modes/blob/main/hardware/GC2093_CSP_Datasheet_V1.1_20201012.pdf)  
+Schematic & HW design guides: [GC2053 CSP 模组设计指南 V1.2 20181212.pdf](https://github.com/libc0607/gc2093_modes/blob/main/hardware/GC2053%20CSP%20%E6%A8%A1%E7%BB%84%E8%AE%BE%E8%AE%A1%E6%8C%87%E5%8D%97%20V1.2%2020181212.pdf) (Pin-to-Pin with GC2053)  
+\* All collected from the Internet.  
+
+### Open Source Hardware 
+[Search gc2093 on OSHWHub](https://oshwhub.com/search?wd=gc2093)  
+Disclaimer: Homemade sensor modules can lead to many image quality issues.  
+
+### Sensor Modules
+Some compatible sensor modules could be used in your custom VTX design, i.e. :  
+**LCKFB-GC2093-200W-MIPI-V1.0-B**: [立创商城](https://item.szlcsc.com/44319754.html) / [LCSC](https://www.lcsc.com/product-detail/C42388919.html) -- Recommend.   
+[Integrated LDOs & OSC](https://github.com/user-attachments/assets/738ba6d3-0871-44d0-8310-88e7695c3ec0), 14mmx14mm, f=3.0mm distortion-free lens, 35.9 CNY / 5.5 USD  
+**LCKFB-GC2093-200W-MIPI-V1.0-L**: [立创商城](https://item.szlcsc.com/44319753.html) / [LCSC](https://www.lcsc.com/product-detail/C42388918.html)  
+
+As GC2093 seems to be one of the 'standard setups' for Kendryte K230 EVBs, there are many cheap compatible sensor modules made for them. (Try searching on Taobao)  
+Almost all these modules share the same 22P FPC definition, and have integrated 1V2/1V8/2V8 LDOs and a 24MHz active crystal oscillator.  
+
+When using those modules with SigmaStar SoCs, you should: 
+ - Connect 3V3, GND, SDA/SCL/RST, MIPI CLK_[N/P] & D[0:1]_[N/P]; Leave the clock output from SoC floated 
+ - Use driver file with ```_24M``` suffix for these modules to get the correct framerate  
 
 ## IQ file
 Use [gc2053.bin](https://github.com/OpenIPC/firmware/blob/master/general/package/sigmastar-osdrv-infinity6e/files/sensor/configs/gc2053.bin) first -- it's good enough.  
 Or try to tune it with IQTool.  
 
-## Theory
+I will not provide any IQ file here. People have different setups and have different problems (usually caused by different 'money-saving tips').   
+The overall image quality can be affected by many factors. Lens, coating of the glass, color filter, ~~Shantou deep fried~~ brand new LDO's low PSRR, light leaking through your free green PCB from JLCPCB (...), ISP structure & tuning, temperature, video bitrate, and your display...  
+So don't judge by any single factor. It's a complex system. )  
+
+The driver will NOT decrease framerate in low light, even if a long exposure time in IQ bin is set. The maximum number of exposure lines is limited to one full frame at the current framerate.  
+Some drivers use a lower FPS to have longer exposure time; This is for FPV -- so it will not. 
+
+## Theory of Overclocking 
 GC2093 has several init register arrays with comments available (see References).   
 So, by some guess and calculation, it is possible to overclock the sensor & get higher framerates.
 
@@ -81,4 +103,6 @@ In my & 侧面(cemian)'s tests, the sensor can be safely overclocked by 30%~40% 
 [gc2093.c in kendryte/k230_sdk](https://github.com/kendryte/k230_sdk/blob/main/src/big/mpp/kernel/sensor/src/gc2093.c)  
 
 ## Build 
-Find anyone who has the Pudding SDK, then ask for help 
+Find anyone who has the Pudding SDK (specifically, V042, if using with OpenIPC SSC338Q), then ask for help  
+
+To strip the debug symbols to reduce `.ko` size, run `arm-linux-gnueabihf-9.1.0-strip --strip-debug gc2093_MIPI.ko`  
